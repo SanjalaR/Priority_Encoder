@@ -1,7 +1,9 @@
 from django import forms
 
 class AccountForm(forms.Form):
-    username=forms.CharField(max_length=25)
+    username = forms.CharField(max_length=25)
+    password = forms.CharField(widget=forms.PasswordInput)
+
 
 class TaskForm(forms.Form):
     Description=forms.CharField(max_length=100)

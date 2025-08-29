@@ -30,32 +30,40 @@ def extract(account):
 
 # Login, Register in home, and actual list in homepage
 def login(request):
-    form=AccountForm()
-    if request.method== 'POST':
-        form=AccountForm(request.POST)
+    form = AccountForm()
+    if request.method == 'POST':
+        form = AccountForm(request.POST)
         if form.is_valid():
-            username=form.cleaned_data['username']
-            qs=Account.objects.filter(username=username).first()
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            qs = Account.objects.filter(username=username).first()
             if not qs:
-                return render(request,'ack.html',{'msg':"Account Doesn't Exist"})
-            request.session['username']=qs.id
-            return render(request,'homepage.html',{'qs':qs,'form':TaskForm(),'tasks':extract(qs)})
-    return render(request,'login.html',{'form':form})
+                return render(request, 'ack.html', {'msg': "Account Doesn't Exist"})
+            # Password check (add this logic if password is stored in Account model)
+            if hasattr(qs, 'password') and qs.password != password:
+                return render(request, 'ack.html', {'msg': "Incorrect password"})
+            request.session['username'] = qs.id
+            return render(request, 'homepage.html', {'qs': qs, 'form': TaskForm(), 'tasks': extract(qs)})
+    return render(request, 'login.html', {'form': form})
 
 def register(request):
-    form=AccountForm()
-    if request.method=='POST':
-        form=AccountForm(request.POST)
+    form = AccountForm()
+    if request.method == 'POST':
+        form = AccountForm(request.POST)
         if form.is_valid():
-            username=form.cleaned_data['username']
-            qs=Account.objects.filter(username=username).first()
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            qs = Account.objects.filter(username=username).first()
             if qs:
-                return render(request,'ack.html',{'msg':"Account already Exists"})
-            a=Account(username=username)
+                return render(request, 'ack.html', {'msg': "Account already Exists"})
+            a = Account(username=username)
+            # Save password if Account model supports it
+            if hasattr(a, 'password'):
+                a.password = password
             a.save()
-            request.session['username']=a.id
-            return render(request,'homepage.html',{'qs':a,'form':TaskForm()})
-    return render(request,'login.html',{'form':form})
+            request.session['username'] = a.id
+            return render(request, 'homepage.html', {'qs': a, 'form': TaskForm()})
+    return render(request, 'login.html', {'form': form})
 
 def home(request):
     return render(request,'home.html')

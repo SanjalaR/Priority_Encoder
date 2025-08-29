@@ -22,5 +22,6 @@ class Task(models.Model):
 
 class Account(models.Model):
     username=models.CharField(max_length=25)
+    password=models.CharField(max_length=25)
     tasklist=models.CharField(max_length=255)
 
