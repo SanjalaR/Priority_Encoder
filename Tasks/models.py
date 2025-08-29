@@ -1,8 +1,6 @@
 from django.db import models
 import datetime as dt
 
-
-# Create your models here.
 class Task(models.Model):
     task_desc=models.CharField(max_length=100)
     task_type=models.CharField(max_length=50)
